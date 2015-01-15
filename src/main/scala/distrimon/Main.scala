@@ -9,7 +9,7 @@ import concurrent.duration._
 object Main extends App {
   implicit val system = ActorSystem("distriSystem")
 
-  cmd()
+  ping()
 
   def cmd(): Unit = {
     import Shell._

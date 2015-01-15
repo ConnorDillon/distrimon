@@ -27,29 +27,30 @@ class MinionHandler(val manager: ActorRef, val conn: ActorRef) extends Connectio
       conn ! Write(ByteString("FAIL"))
       conn ! Close
       context stop self
-    case minion: ActorRef =>
+    case minion: Manager.Minion =>
+      val tunnel = minion.tunnel
       log.error("succesfully identified")
       conn ! Write(ByteString("OK"))
-      minion ! ConnUp
-      become(Identified(minion, conn))
+      tunnel ! ConnUp
+      become(Identified(tunnel, conn))
   }}
 
-  case class Identified(minion: ActorRef, conn: ActorRef) extends Connected with Delivery {
+  case class Identified(minionTunnel: ActorRef, conn: ActorRef) extends Connected with Delivery {
     def handleClose(): Unit = {
       log.error("connection closed unexpectedly")
-      minion ! ConnDown
-      become(Disconnected(minion))
+      minionTunnel ! ConnDown
+      become(Disconnected(minionTunnel))
     }
   }
 
-  case class Disconnected(minion: ActorRef) extends super.Disconnected with Delivery { is {
+  case class Disconnected(minionTunnel: ActorRef) extends super.Disconnected with Delivery { is {
     case e: Envolope => retry(e)
   }}
 
 
   trait Delivery {
-    val minion: ActorRef
-    def deliver(e: Envolope): Unit = minion ! Recv(e)
-    def retry(e: Envolope): Unit = minion ! e
+    val minionTunnel: ActorRef
+    def deliver(e: Envolope): Unit = minionTunnel ! Recv(e)
+    def retry(e: Envolope): Unit = minionTunnel ! e
   }
 }
