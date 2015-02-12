@@ -15,7 +15,7 @@ object Main extends App {
     import Shell._
     implicit val timeout = Timeout(10.seconds)
     val shell = addActor[Shell]("shell")
-    val future = shell ? Envolope("", "", Command("sleep 2; ls -la | wc -l"))
+    val future = shell ? Envolope("", "", Command(0, "sleep 2; ls -la | wc -l"))
     println(Await.result(future, 10.seconds))
   }
 

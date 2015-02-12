@@ -9,9 +9,9 @@ class Shell extends BaseActor {
   import context.dispatcher
 
   def exec(sender: ActorRef, env: Envolope): Completed = env.msg match {
-    case Command(cmd) =>
+    case Command(id, cmd) =>
       log.info(s"executing command: $cmd")
-      val result = Result(stringSeqToProcess(Seq("sh", "-c", cmd)).!!.init)
+      val result = Result(id, stringSeqToProcess(Seq("sh", "-c", cmd)).!!.init)
       log.info(s"command: ( $cmd ) completed with result: ${result.result}")
       Completed(sender, env.reply(result))
   }
@@ -28,6 +28,6 @@ class Shell extends BaseActor {
 }
 
 object Shell {
-  case class Command(cmd: String)
-  case class Result(result: String)
+  case class Command(id: Int, cmd: String)
+  case class Result(id: Int, result: String)
 }
