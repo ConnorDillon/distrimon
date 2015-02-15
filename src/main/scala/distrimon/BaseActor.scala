@@ -6,6 +6,7 @@ import scala.reflect.ClassTag
 
 trait BaseActor extends Actor {
   implicit val system = context.system
+  implicit val dispatcher = context.dispatcher
 
   val log = Logging(system, this)
   log.info("starting")

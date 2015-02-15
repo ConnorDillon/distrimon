@@ -3,8 +3,6 @@ package distrimon
 import concurrent.duration.FiniteDuration
 
 trait ClockWorker extends BaseActor {
-  import context.dispatcher
-
   private var cnt = 0
   def count = cnt
 

@@ -8,8 +8,6 @@ import akka.io.Tcp.{Connected=>TcpConnected, Write, Connect, CommandFailed, Rece
 import concurrent.duration._
 
 trait Client extends Connection with Tunnel {
-   import context.dispatcher
-
   connect()
 
   val initial = Connecting(Queue())

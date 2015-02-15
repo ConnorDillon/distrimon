@@ -6,8 +6,6 @@ import sys.process.stringSeqToProcess
 import Shell._
 
 class Shell extends BaseActor {
-  import context.dispatcher
-
   def exec(sender: ActorRef, env: Envolope): Completed = env.msg match {
     case Command(id, cmd) =>
       log.info(s"executing command: $cmd")
