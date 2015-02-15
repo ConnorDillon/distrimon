@@ -1,8 +1,9 @@
-package distrimon
+package distrimon.minion
 
 import scala.sys.process.stringSeqToProcess
 import scala.concurrent.Future
 import akka.actor.ActorRef
+import distrimon.BaseActor
 
 class Shell extends BaseActor {
   import Shell._

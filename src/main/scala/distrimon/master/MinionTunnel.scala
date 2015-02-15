@@ -1,6 +1,7 @@
-package distrimon
+package distrimon.master
 
 import akka.actor.{PoisonPill, ActorRef}
+import distrimon.{Envolope, Tunnel}
 import MinionTunnel._
 
 class MinionTunnel extends Tunnel {

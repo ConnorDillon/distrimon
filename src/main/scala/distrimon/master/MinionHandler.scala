@@ -1,8 +1,9 @@
-package distrimon
+package distrimon.master
 
 import akka.actor.ActorRef
 import akka.io.Tcp.{ConnectionClosed, Write, Close, Received}
 import akka.util.ByteString
+import distrimon.{Connection, Envolope, State}
 import Manager._
 import MinionTunnel._
 

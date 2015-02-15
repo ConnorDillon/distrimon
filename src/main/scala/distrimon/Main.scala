@@ -1,10 +1,12 @@
 package distrimon
 
+import scala.concurrent.Await
+import scala.concurrent.duration._
 import akka.actor.ActorSystem
 import akka.pattern.ask
 import akka.util.Timeout
-import concurrent.Await
-import concurrent.duration._
+import distrimon.master.Master
+import distrimon.minion.{Minion, Shell}
 
 object Main extends App {
   implicit val system = ActorSystem("distriSystem")

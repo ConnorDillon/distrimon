@@ -1,6 +1,7 @@
-package distrimon
+package distrimon.master
 
 import akka.actor.ActorRef
+import distrimon.{BaseActor, Envolope}
 import Manager._
 
 class Manager extends BaseActor {

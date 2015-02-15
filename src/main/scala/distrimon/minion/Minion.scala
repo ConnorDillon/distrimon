@@ -1,4 +1,6 @@
-package distrimon
+package distrimon.minion
+
+import distrimon.{addActor, BaseActor}
 
 class Minion(id: Int) extends BaseActor {
   val master = addChild[MasterTunnel]("master", id)

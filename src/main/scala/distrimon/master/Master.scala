@@ -1,5 +1,6 @@
-package distrimon
+package distrimon.master
 
+import distrimon.BaseActor
 import java.net.InetSocketAddress
 
 class Master(val addr: InetSocketAddress) extends BaseActor {

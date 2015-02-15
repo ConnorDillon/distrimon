@@ -1,9 +1,10 @@
-package distrimon
+package distrimon.minion
 
 import akka.actor.ActorRef
 import concurrent.duration._
+import distrimon.{ClockWorker, Sender}
+import distrimon.master.Ponger._
 import Pinger._
-import Ponger._
 
 class Pinger(val tunnel: ActorRef) extends ClockWorker with Sender {
   val interval = 1.second

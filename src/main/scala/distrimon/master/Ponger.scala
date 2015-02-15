@@ -1,7 +1,8 @@
-package distrimon
+package distrimon.master
 
+import distrimon.BaseActor
+import distrimon.minion.Pinger._
 import Ponger._
-import Pinger._
 
 class Ponger extends BaseActor {
   def receive = {
