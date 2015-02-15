@@ -1,7 +1,7 @@
 package distrimon.minion
 
 import java.net.InetSocketAddress
-import distrimon.{backupMaster, Client, firstMaster}
+import distrimon.Client
 
 class MasterTunnel(val id: Int) extends Client {
   def getAddress: InetSocketAddress = {

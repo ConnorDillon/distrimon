@@ -6,7 +6,7 @@ import akka.actor.ActorSystem
 import akka.pattern.ask
 import akka.util.Timeout
 import distrimon.master.Master
-import distrimon.minion.{Minion, Shell}
+import distrimon.minion.{firstMaster, backupMaster, Minion, Shell}
 
 object Main extends App {
   implicit val system = ActorSystem("distriSystem")
