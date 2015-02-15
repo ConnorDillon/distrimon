@@ -80,26 +80,27 @@ class Manager extends BaseActor {
       }
     }
     case TellAllMinions(msg) => minions.values.foreach(_.tunnel ! msg)
+    case x => context.parent forward x
   }
 }
 
-object Manager {
+object Manager extends Protocol {
   case class Minion(id: Int, name: String, tunnel: ActorRef)
   case class Group(id: Int, minions: Map[Int, Minion])
 
-  case class AddMinion(id: Int)
-  case class RemoveMinion(id: Int)
-  case class GetMinion(id: Int)
-  case class TellMinion(id: Int, env: Envolope)
+  case class AddMinion(id: Int) extends Msg
+  case class RemoveMinion(id: Int) extends Msg
+  case class GetMinion(id: Int) extends Msg
+  case class TellMinion(id: Int, env: Envolope) extends Msg
 
-  case class AddGroup(id: Int)
-  case class RemoveGroup(id: Int)
-  case class GetGroup(id: Int)
-  case class TellGroup(id: Int, env: Envolope)
-  case class AddMember(gid: Int, mid: Int)
-  case class RemoveMember(gid: Int, mid: Int)
+  case class AddGroup(id: Int) extends Msg
+  case class RemoveGroup(id: Int) extends Msg
+  case class GetGroup(id: Int) extends Msg
+  case class TellGroup(id: Int, env: Envolope) extends Msg
+  case class AddMember(gid: Int, mid: Int) extends Msg
+  case class RemoveMember(gid: Int, mid: Int) extends Msg
 
-  case class TellAllMinions(env: Envolope)
+  case class TellAllMinions(env: Envolope) extends Msg
 
   case object NoSuchMinion
   case object NoSuchGroup

@@ -17,7 +17,10 @@ trait Tunnel extends FSM {
   trait Open extends State with EnvolopeDelivery {
     def send(e: Envolope): Unit
 
-    is { case e: Envolope => send(e) }
+    is {
+      case e: Envolope => send(e)
+      case msg: Any => send(Envolope(sender().path.toStringWithoutAddress, "none", msg))
+    }
   }
 
   trait Closed extends State with EnvolopeDelivery {
@@ -28,9 +31,14 @@ trait Tunnel extends FSM {
       queue foreach retry
     }
 
+    def enqueue(env: Envolope) = {
+      log.info(s"queueing: $env")
+      queue enqueue env
+    }
+
     is {
-      case e: Envolope => log.info(s"queueing: $e")
-                          queue enqueue e
+      case env: Envolope => enqueue(env)
+      case msg: Any => enqueue(Envolope(sender().path.toStringWithoutAddress, "none", msg))
     }
   }
 

@@ -1,16 +1,14 @@
 package distrimon.minion
 
-import akka.actor.ActorRef
 import concurrent.duration._
-import distrimon.{ClockWorker, Sender}
+import distrimon.ClockWorker
 import distrimon.master.Ponger._
 import Pinger._
 
-class Pinger(val tunnel: ActorRef) extends ClockWorker with Sender {
+class Pinger extends ClockWorker {
   val interval = 1.second
-  val ponger = remote("/user/master/ponger")
 
-  def work(): Unit = ponger ! Ping(count)
+  def work(): Unit = context.parent ! Ping(count)
 
   override def receive = {
     case Pong(_) => Unit
@@ -18,6 +16,6 @@ class Pinger(val tunnel: ActorRef) extends ClockWorker with Sender {
   }
 }
 
-object Pinger {
-  case class Pong(id: Int)
+object Pinger extends Protocol {
+  case class Pong(id: Int) extends Msg
 }

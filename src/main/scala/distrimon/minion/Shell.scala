@@ -19,7 +19,7 @@ class Shell extends BaseActor {
   }
 }
 
-object Shell {
-  case class Command(id: Int, cmd: String)
+object Shell extends Protocol {
+  case class Command(id: Int, cmd: String) extends Msg
   case class Result(id: Int, result: String)
 }

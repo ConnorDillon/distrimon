@@ -10,6 +10,6 @@ class Ponger extends BaseActor {
   }
 }
 
-object Ponger {
-  case class Ping(id: Int)
+object Ponger extends Protocol {
+  case class Ping(id: Int) extends Msg
 }
