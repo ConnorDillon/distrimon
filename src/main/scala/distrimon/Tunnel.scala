@@ -1,13 +1,17 @@
 package distrimon
 
-import collection.mutable.{Queue=>MQueue}
+import scala.collection.mutable
+import akka.actor.ActorRef
+import akka.pattern.ask
 
 trait Tunnel extends FSM {
 
-  type Queue = MQueue[Envolope]
+  val stubs = mutable.Map[String, ActorRef]()
+
+  type Queue = mutable.Queue[Envolope]
 
   object Queue {
-    def apply(e: Envolope*): Queue = MQueue[Envolope](e: _*)
+    def apply(e: Envolope*): Queue = mutable.Queue[Envolope](e: _*)
   }
 
   trait Open extends State with EnvolopeDelivery {
@@ -18,8 +22,6 @@ trait Tunnel extends FSM {
 
   trait Closed extends State with EnvolopeDelivery {
     val queue: Queue
-
-    def retry(e: Envolope): Unit
 
     def flush(): Unit = {
       log.info(s"flushing queue: $queue")
@@ -33,7 +35,42 @@ trait Tunnel extends FSM {
   }
 
   trait EnvolopeDelivery {
-    def deliver(e: Envolope): Unit = context.actorSelection(e.dst) ! e
     def retry(e: Envolope): Unit = self ! e
+
+    def deliver(env: Envolope): Unit = {
+      def askDst(dst: ActorRef, env: Envolope): Unit = {
+        val fut = dst ? env.msg
+        fut.map(msg => self ! env.reply(msg))
+      }
+
+      def getStub(src: String): ActorRef = stubs get env.src match {
+        case Some(stub) => stub
+        case None =>
+          log.info(s"creating stub for: $src")
+          val stub = context.actorOf(Stub(src))
+          stubs(src) = stub
+          stub
+      }
+      
+      def checkTemp(src: String): Boolean = src.take(6) == "/temp/"
+
+      if (env.dst == "none") {
+        val dst = context.parent
+        if (checkTemp(env.src)) {
+          askDst(dst, env)
+        } else {
+          val stub = getStub(env.src)
+          dst.tell(env.msg, stub)
+        }
+      } else {
+        val dstFut = context.actorSelection(env.dst).resolveOne()
+        if (checkTemp(env.src)) {
+          dstFut.map(x => askDst(x, env))
+        } else {
+          val stub = getStub(env.src)
+          dstFut.map(_.tell(env.msg, stub))
+        }
+      }
+    }
   }
 }

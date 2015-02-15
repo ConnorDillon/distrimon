@@ -6,13 +6,13 @@ import Pinger._
 import Ponger._
 
 class Pinger(val tunnel: ActorRef) extends ClockWorker with Sender {
-  val interval = 1000.millis
+  val interval = 1.second
   val ponger = remote("/user/master/ponger")
 
   def work(): Unit = ponger ! Ping(count)
 
   override def receive = {
-    case Envolope(_, _, Pong(_)) => Unit
+    case Pong(_) => Unit
     case x => super.receive(x)
   }
 }

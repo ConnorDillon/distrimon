@@ -1,28 +1,21 @@
 package distrimon
 
-import akka.actor.ActorRef
+import scala.sys.process.stringSeqToProcess
 import scala.concurrent.Future
-import sys.process.stringSeqToProcess
-import Shell._
+import akka.actor.ActorRef
 
 class Shell extends BaseActor {
-  def exec(sender: ActorRef, env: Envolope): Completed = env.msg match {
+  import Shell._
+
+  def exec(cmd: String): String = stringSeqToProcess(Seq("sh", "-c", cmd)).!!
+
+  def handle(sender: ActorRef, id: Int, cmd: String): Unit = Future(exec(cmd)).map(res => sender ! Result(id, res))
+
+  def receive = {
     case Command(id, cmd) =>
       log.info(s"executing command: $cmd")
-      val result = Result(id, stringSeqToProcess(Seq("sh", "-c", cmd)).!!.init)
-      log.info(s"command: ( $cmd ) completed with result: ${result.result}")
-      Completed(sender, env.reply(result))
+      handle(sender(), id, cmd)
   }
-  
-  def receive = {
-    case e: Envolope => Future {
-      exec(sender, e)
-    } onSuccess {
-      case Completed(sender, env) => sender ! env
-    }
-  }
-
-  case class Completed(sender: ActorRef, envolope: Envolope)
 }
 
 object Shell {

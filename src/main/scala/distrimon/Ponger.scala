@@ -3,9 +3,9 @@ package distrimon
 import Ponger._
 import Pinger._
 
-class Ponger extends Replier {
+class Ponger extends BaseActor {
   def receive = {
-    case e @ Envolope(_, _, Ping(id)) => reply(e, Pong(id))
+    case Ping(id) => sender() ! Pong(id)
   }
 }
 
